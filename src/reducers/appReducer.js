@@ -20,23 +20,30 @@ const initialState = {
 export const appReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_FEATURE:
-      const payloadFeature = action.payload;
-      const newFeaturesArray = [
-        ...state.car.features, payloadFeature
+      const addFeaturesArray = [
+        ...state.car.features, action.payload
       ]
-      const newAdditionalPrice = newFeaturesArray.reduce(function(acc, obj) {return acc + obj.price}, 0);
+      const addAdditionalPrice = addFeaturesArray.reduce(function(acc, obj) {return acc + obj.price}, 0);
       return {
-        additionalPrice: newAdditionalPrice,
+        additionalPrice: addAdditionalPrice,
         car: {
           ...state.car,
-          features: newFeaturesArray
+          features: addFeaturesArray
         },
-        additionalFeatures: state.additionalFeatures.filter(feature => payloadFeature !== feature)
+        additionalFeatures: state.additionalFeatures.filter(feature => action.payload !== feature)
       };
     case REMOVE_FEATURE:
+      const remFeaturesArray = state.car.features.filter(feature => action.payload !== feature);
+      const remAdditionalPrice = remFeaturesArray.reduce(function(acc, obj) {return acc + obj.price}, 0);
       return {
-        ...state,
-
+        additionalPrice: remAdditionalPrice,
+        car: {
+          ...state.car,
+          features: remFeaturesArray
+        },
+        additionalFeatures: [
+          ...state.additionalFeatures, action.payload
+        ]
       };
     default:
       return state;
